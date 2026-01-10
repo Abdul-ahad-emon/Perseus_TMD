@@ -1,0 +1,179 @@
+/* =====================================================
+   1. Mehedi Hasan Omi
+===================================================== */
+
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <iomanip>
+#include <fstream>
+
+using namespace std;
+
+/* =====================================================
+   Task: Test function definition
+===================================================== */
+double f(double x)
+{
+    return sin(x);
+}
+
+/* =====================================================
+   2. Antor Sikder
+   Task: Composite Trapezoidal Rule implementation
+===================================================== */
+double trapezoidal(double a, double b, int n)
+{
+    double h = (b - a) / n;
+    double sum = 0.5 * (f(a) + f(b));
+
+    for (int i = 1; i < n; i++)
+        sum += f(a + i * h);
+
+    return sum * h;
+}
+
+/* =====================================================
+   3. Rehan Khadem
+   Task: Simpson’s 1/3 Rule implementation
+===================================================== */
+double simpson(double a, double b, int n)
+{
+    double h = (b - a) / n;
+    double sum = f(a) + f(b);
+
+    for (int i = 1; i < n; i++)
+    {
+        double x = a + i * h;
+        if (i % 2 == 0)
+            sum += 2 * f(x);
+        else
+            sum += 4 * f(x);
+    }
+    return sum * h / 3.0;
+}
+
+/* =====================================================
+   4. MD. Jamiur Rahman Khan
+   Task: Romberg Integration – table construction logic
+===================================================== */
+vector<vector<double>> romberg(double a, double b, int maxLevel)
+{
+    vector<vector<double>> R(maxLevel, vector<double>(maxLevel));
+
+    for (int k = 0; k < maxLevel; k++)
+    {
+        int n = static_cast<int>(pow(2, k));
+        R[k][0] = trapezoidal(a, b, n);
+
+        for (int j = 1; j <= k; j++)
+        {
+            R[k][j] = R[k][j - 1] +
+                      (R[k][j - 1] - R[k - 1][j - 1]) /
+                      (pow(4, j) - 1);
+        }
+    }
+    return R;
+}
+
+/* =====================================================
+   5. Nurjahan Khanom Mim
+   Task: Exact solution & error computation logic
+===================================================== */
+double exactValue()
+{
+    return 1.0 - cos(1.0);
+}
+
+/* =====================================================
+   6. Md Shah Naohaj Khan
+   Task: PDF-matched Romberg table printing
+===================================================== */
+void printRombergTable(const vector<vector<double>>& R)
+{
+    cout << "Romberg Integration Table:\n\n";
+    cout << setw(10) << "k\\j"
+         << setw(15) << "0"
+         << setw(15) << "1"
+         << setw(15) << "2" << endl;
+
+    // PDF presentation skips first trapezoidal level (n=1)
+    for (int i = 1; i <= 3; i++)
+    {
+        cout << setw(10) << i - 1;
+        for (int j = 0; j <= i - 1; j++)
+            cout << setw(15) << R[i][j];
+        cout << endl;
+    }
+}
+
+/* =====================================================
+   7. Md. Mezbahuzzaman Rana	
+   Task: Simpson vs Romberg comparison logic
+===================================================== */
+void compareWithSimpson(double a, double b, double exact)
+{
+    int nSimpson = 4;
+    double S = simpson(a, b, nSimpson);
+
+    cout << "\nSimpson's Rule (n=4) = " << S << endl;
+    cout << "Simpson Absolute Error = "
+         << fabs(S - exact) << endl;
+}
+
+/* =====================================================
+   8. Sarhan Saad
+   Task: Error decay & convergence data generation
+===================================================== */
+void generateErrorFiles(const vector<vector<double>>& R,
+                        double a, double b, double exact)
+{
+    ofstream romErr("error_romberg.csv");
+    ofstream simpErr("error_simpson.csv");
+
+    romErr << "level,error\n";
+    simpErr << "n,error\n";
+
+    for (int k = 1; k <= 5; k++)
+        romErr << k << "," << fabs(R[k][k] - exact) << "\n";
+
+    for (int n = 2; n <= 128; n *= 2)
+        simpErr << n << "," << fabs(simpson(a, b, n) - exact) << "\n";
+
+    romErr.close();
+    simpErr.close();
+}
+
+/* =====================================================
+   9. Oyshie Ahmed
+   Task: Output formatting & result presentation
+===================================================== */
+void printFinalResult(const vector<vector<double>>& R, double exact)
+{
+    cout << "\nBest Romberg Approximation = " << R[3][3] << endl;
+    cout << "Exact Value = " << exact << endl;
+    cout << "Romberg Absolute Error = "
+         << fabs(R[3][3] - exact) << endl;
+}
+
+/* =====================================================
+   10. Abdul Ahad Emon
+   Task: Main program integration & execution flow
+===================================================== */
+int main()
+{
+    double a = 0.0, b = 1.0;
+    double exact = exactValue();
+
+    cout << fixed << setprecision(10);
+
+    int maxLevel = 6;  // full Romberg internally
+    auto R = romberg(a, b, maxLevel);
+
+    printRombergTable(R);
+    printFinalResult(R, exact);
+    compareWithSimpson(a, b, exact);
+    generateErrorFiles(R, a, b, exact);
+
+    return 0;
+}
