@@ -81,3 +81,24 @@ double exactValue()
 {
     return 1.0 - cos(1.0);
 }
+/* =====================================================
+   6. Md Shah Naohaj Khan
+   Task: PDF-matched Romberg table printing
+===================================================== */
+void printRombergTable(const vector<vector<double>>& R)
+{
+    cout << "Romberg Integration Table:\n\n";
+    cout << setw(10) << "k\\j"
+         << setw(15) << "0"
+         << setw(15) << "1"
+         << setw(15) << "2" << endl;
+
+    // PDF presentation skips first trapezoidal level (n=1)
+    for (int i = 1; i <= 3; i++)
+    {
+        cout << setw(10) << i - 1;
+        for (int j = 0; j <= i - 1; j++)
+            cout << setw(15) << R[i][j];
+        cout << endl;
+    }
+}
