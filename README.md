@@ -37,14 +37,17 @@ All implementations are done in **C++**, and the report is prepared using **LaTe
 
 ## 🎯 Project Objectives
 
-- Construct a **full Romberg table** using recursive formulas.
+The main objectives of this project are:
+
+- Construct a full Romberg integration table using recursive formulas.
 - Compute numerical approximations using:
   - Composite Trapezoidal Rule
   - Simpson’s 1/3 Rule
   - Romberg Integration
-- Compare all results with the **exact analytical solution**.
-- Generate **error decay data** and visualize convergence behavior.
-- Organize the project using **GitHub** for version control and collaboration.
+- Compare numerical results with the exact analytical solution.
+- Analyze error decay and visualize convergence behavior.
+- Organize and manage the project using GitHub for version control and collaborative development.
+
 
 ---
 
